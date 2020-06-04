@@ -43,14 +43,21 @@ class DecisionEngine:
 
     def choose_server(self):
         """
-        According self.decision_algorithm, this class get decision func(now this is a str),
-        find the best suitable server.
+        According self.decision_algorithm, this class get decision func (now this is a str)
+        self.decision_func, find the best suitable server.
 
         :return: Server (in server.py)
         """
-
-        # TODO: using first server in server_list now
-        return self.server_list.serverList[0]
+        # func is a decision function in ServerList class.
+        func = self.server_list.map_decision_func().get(self.decision_func)
+        # If there is not a server returned by decision function, func() will return None.
+        chosen_server = func()
+        if chosen_server is None:
+            logger.info(f"Failed to choose server using {self.decision_func}")
+            return None
+        else:
+            logger.info(f"Successfully choose server {chosen_server} using {self.decision_func}")
+            return chosen_server
 
     def submit_task(self, task: str, port: int = 80, ip: str = None):
         """
@@ -59,11 +66,15 @@ class DecisionEngine:
         :param task: A task receive by this function. (now is a str)
         :param port: This task run on server specific port, if not specified, use 80.
         :param ip  : Server ip address where you want to run your task.
-        :return: Result returned by Thread.
+        :return: If chosen_server=self.choose_server is None, return None;
+                 else result returned by Thread (a Future object).
         """
-
         chosen_server = Server("UserSpecific", ip) if ip else self.choose_server()
+        if chosen_server is None:
+            logger.info(f"Failed to submit task, chosen server is None")
+            return None
         task_added = TaskInfo(chosen_server, task, port)
+        logger.info(f"Successfully submit task {task_added} to ThreadPool")
         # Don't return .results() here, only you call results() method
         # it will block.
         return self.pool.submit(self.offload_task, task_added)

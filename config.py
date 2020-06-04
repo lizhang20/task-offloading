@@ -5,8 +5,8 @@ class Config:
     }
 
     decision_algorithm = {
-        "default": "random_choice",
-        "minimum_ping_delay": "min_ping"
+        "default": "select_random_server",
+        "minimum_ping_delay": "select_min_ping_server",
     }
 
 

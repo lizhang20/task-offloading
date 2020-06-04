@@ -3,24 +3,25 @@ from queue import Queue
 
 from engine import DecisionEngine
 from server import ServerList, Server
+from config import Config
 
 
 class EngineTestCase(unittest.TestCase):
     def test_engine_initialization(self):
         q = Queue()
         server_list = ServerList()
-        de1 = DecisionEngine("default", q, server_list)
+        # decision algorithm 0
+        da = Config.decision_algorithm
 
-        self.assertEqual(de1.decision_func, "random_choice")
-        print(de1.task_queue)
-        print(de1.server_list)
-
-        de2 = DecisionEngine("bdcontract", q, server_list)
-        self.assertEqual("min_ping", de2.decision_func)
+        for key, value in da.items():
+            de = DecisionEngine(decision_algorithm=key, task_queue=q, server_list=server_list)
+            self.assertEqual(de.decision_func, value)
 
     def test_choose_server(self):
         q = Queue()
-        server_list = ServerList()
+        server_list = ServerList.specify_server_list({
+            "PC": "127.0.0.1",
+        })
         de = DecisionEngine("default", q, server_list)
 
         chosen_server = de.choose_server()
@@ -30,7 +31,7 @@ class EngineTestCase(unittest.TestCase):
     def test_submit_task(self):
         q = Queue()
         server_list = ServerList()
-        de = DecisionEngine("default", q, server_list)
+        de = DecisionEngine("minimum_ping_delay", q, server_list)
 
         task1 = "offloading/10"
         ret1 = de.submit_task(task1, port=5000)

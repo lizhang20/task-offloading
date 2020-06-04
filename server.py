@@ -133,6 +133,22 @@ class ServerList:
         """
         return random.choice(self.serverList)
 
+    def map_decision_func(self):
+        """
+        This is a map for <str, func>. Use this to get correct decision function.
+
+        When you have new decision function, update here and config.py
+
+        TODO: Or maybe we can use eval() to map function name to a function.
+
+        :return: A dict with <funcName: str, func>
+        """
+        d = {
+            "select_random_server": self.select_random_server,
+            "select_min_ping_server": self.select_min_ping_server,
+        }
+        return d
+
     @classmethod
     def specify_server_list(cls, server_list: dict):
         """
