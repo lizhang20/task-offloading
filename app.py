@@ -5,14 +5,16 @@ from flask import Flask
 from engine import DecisionEngine, TaskInfo
 from server import ServerList
 from taskqueue import TaskQueue
-
 from config import Config, SmartContractConfig
 
 app = Flask(__name__)
 server_list = ServerList()
 task_queue = Queue()
-# DecisionEngine instance using default algorithm
-de = DecisionEngine(decision_algorithm="default", task_queue=task_queue, server_list=server_list)
+# DecisionEngine instance's decision algorithm: minimum_ping_delay
+# see more info in config.py
+de = DecisionEngine(decision_algorithm="minimum_ping_delay",
+                    task_queue=task_queue,
+                    server_list=server_list)
 # TaskQueue instance
 tq = TaskQueue(task_queue=task_queue)
 

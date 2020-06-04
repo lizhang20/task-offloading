@@ -6,7 +6,7 @@ class Config:
 
     decision_algorithm = {
         "default": "random_choice",
-        "bdcontract": "min_ping"
+        "minimum_ping_delay": "min_ping"
     }
 
 
