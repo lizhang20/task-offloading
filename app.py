@@ -21,7 +21,7 @@ de = DecisionEngine(decision_algorithm="default",
 tq = TaskQueue(task_queue=task_queue)
 
 
-# Error handler with invalid interfaces
+# Error handler with invalid interfaces on this flask server
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error="404 Not Found"), 404
@@ -35,7 +35,7 @@ def hello_world():
     logger.info("Client interface hello_world(route'/') has been called")
     task = FlaskTestInterfaces.hello_world()
     ret = de.submit_task(task=task, port=FlaskTestInterfaces.default_port)
-    return ret.result().text
+    return jsonify(data=ret.result().text)
 
 
 @app.route("/square/<num>")
@@ -43,7 +43,7 @@ def square(num):
     logger.info(f"Client interface square(route'/square/<num>') has been called with param {num}")
     task = FlaskTestInterfaces.get_double(num)
     ret = de.submit_task(task=task, port=FlaskTestInterfaces.default_port)
-    return ret.result().text
+    return jsonify(data=ret.result().text)
 
 
 @app.route("/getserverlists")
