@@ -1,9 +1,6 @@
 import abc
 
 from loguru import logger
-import requests
-
-from server import Server
 
 
 class BaseInterfaces(abc.ABC):

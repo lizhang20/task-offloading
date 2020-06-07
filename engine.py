@@ -29,7 +29,7 @@ class TaskInfo(NamedTuple):
 
 class DecisionEngine:
 
-    def __init__(self, decision_algorithm: str, task_queue: Queue, server_list: ServerList):
+    def __init__(self, *, decision_algorithm: str, task_queue: Queue, server_list: ServerList, max_workers: int = 20):
         # Now decision_func is a str
         self.decision_func = Config.decision_algorithm[decision_algorithm]
         # A task queue which add tasks to
@@ -37,9 +37,9 @@ class DecisionEngine:
         # Current server list
         self.server_list = server_list
         # A thread_pool to execute offloading tasks
-        self.pool = ThreadPoolExecutor(10)
+        self.pool = ThreadPoolExecutor(max_workers)
 
-        logger.info(f"Initial DecisionEngine with decision_algorithm: [{decision_algorithm}]")
+        logger.info(f"Initial DecisionEngine with decision_algorithm: [{decision_algorithm}], [{max_workers}] workers")
 
     def choose_server(self):
         """
