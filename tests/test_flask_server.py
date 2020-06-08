@@ -24,7 +24,5 @@ class FlaskTestServerListTestCase(unittest.TestCase):
         server_list.print_all_servers()
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
