@@ -169,6 +169,18 @@ class ServerList:
         }
         return d
 
+    def convert_to_ip_list(self):
+        """
+        Convert current self.serverList to a IP list without serverName.
+        :return: a list of serverIP in self.serverList.
+        """
+        ret = list()
+        for server in self.serverList:
+            ret.append(server.serverIP)
+        # delete duplicate IP address in self.serverList
+        ret = list(set(ret))
+        return ret
+
     @classmethod
     def specify_server_list(cls, server_list: dict):
         """
@@ -194,24 +206,3 @@ class ServerList:
 class FlaskTestServerList(ServerList):
     def __init__(self):
         super().__init__()
-
-    def update_server_from_interface(self, url: str):
-        """
-        Use interface which server provide to get all servers.
-        Server returned value format:
-        {
-            "data": [
-                "123.123.123.123",
-                "12.12.12.12",
-            ]
-        }
-        Purpose of this function is to parse this returned value
-        of specific interface and update self.serverList with new data.
-        :param url: request url of my flask server to get serverList
-        :return: None
-        """
-        r = requests.get(url)
-        logger.info(f"Call remote url {url} to get server list")
-        data = json.loads(r.text)["data"]
-        logger.info(f"Get {len(data)} server info from remote url {url}")
-        self.update_server_list_using_list(data)

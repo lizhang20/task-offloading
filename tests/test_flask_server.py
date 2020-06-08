@@ -16,13 +16,14 @@ class FlaskTestServerListTestCase(unittest.TestCase):
         server_list1 = FlaskTestServerList.specify_server_list(d)
         self.assertEqual(len(d), server_list1.len())
 
-    def test_update_server_from_interface(self):
-        url = "http://127.0.0.1:5000/getserverlists"
+    def test_update_server_from_list(self):
         server_list = FlaskTestServerList()
+        new_servers = ["127.0.0.1", "127.0.0.1", "147.120.147.120"]
 
-        self.assertEqual(server_list.len(), 2)
+        server_list.update_server_list_using_list(new_servers)
+        server_list.print_all_servers()
 
-        server_list.update_server_from_interface(url=url)
+
 
 
 if __name__ == '__main__':
