@@ -10,6 +10,13 @@ class Config:
     }
 
 
+class FlaskTestConfig(Config):
+    server_list = {
+        "PC": "127.0.0.1",
+        "vagrant-ubuntu": "192.168.56.2",
+    }
+
+
 class SmartContractConfig(Config):
     # This is a dict containing pairs of <function name: string, offloading or not: bool>
     # Engine will search in this dict to determine whether to offload or not.
@@ -22,3 +29,10 @@ class SmartContractConfig(Config):
 
     def __init__(self):
         pass
+
+
+config = {
+    "default": Config,
+    "FlaskTestConfig": FlaskTestConfig,
+    "SmartContractConfig": SmartContractConfig,
+}

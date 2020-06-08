@@ -5,10 +5,8 @@ import random
 
 from loguru import logger
 from ping3 import ping
-import requests
-import json
 
-from config import Config
+import config
 
 
 class ServerInfo(NamedTuple):
@@ -63,25 +61,30 @@ class Server:
 
 class ServerList:
 
-    def __init__(self):
+    def __init__(self, cfg: str = "default"):
         """
         Initial a server list instance according to config.py by reading Config.server_list.
+        If not specify cfg str, use default Config class.
+
+        :param cfg: config str, mapping to a config class in config.py
         """
         # self.serverList is a list contains Server instances.
         self.serverList = list()
         # read_cnt = self.read_server_list_from_config()
-        self.read_server_list_from_config()
+        self.read_server_list_from_config(cfg)
         logger.info(f"Successfully create a {self.__class__.__name__} instance using [config]")
 
-    def read_server_list_from_config(self):
+    def read_server_list_from_config(self, cfg: str):
         """
         Read server_list(a dict with <serverName, serverIP> pairs) from config module.
 
-        :return: Successfully reading server number.
+        :param cfg: config str, mapping to a config class in config.py
+        :return: Successfully reading server numbers.
         TODO: IS THIS RETURNED VALUE USELESS??
         """
         cnt = 0
-        for name, ip_addr in Config.server_list.items():
+        config_cls = config.config[cfg]
+        for name, ip_addr in config_cls.server_list.items():
             self.serverList.append(Server(name, ip_addr))
             cnt += 1
         logger.info(f"Successfully reading {cnt} server list from config file")
@@ -205,4 +208,8 @@ class ServerList:
 
 class FlaskTestServerList(ServerList):
     def __init__(self):
-        super().__init__()
+        """
+        A instance of this class can also be created by
+        instance = ServerList("FlaskTestConfig")
+        """
+        super().__init__("FlaskTestConfig")
