@@ -5,6 +5,8 @@ import random
 
 from loguru import logger
 from ping3 import ping
+import requests
+import json
 
 from config import Config
 
@@ -69,7 +71,7 @@ class ServerList:
         self.serverList = list()
         # read_cnt = self.read_server_list_from_config()
         self.read_server_list_from_config()
-        logger.info(f"Successfully create a ServerList instance using config")
+        logger.info(f"Successfully create a {self.__class__.__name__} instance using [config]")
 
     def read_server_list_from_config(self):
         """
@@ -84,6 +86,24 @@ class ServerList:
             cnt += 1
         logger.info(f"Successfully reading {cnt} server list from config file")
         return cnt
+
+    def update_server_list_using_list(self, lst: list):
+        """
+        Update self.serverList with a list param.
+        :return: None
+        """
+        logger.info(f"Update current server list using given list {lst}")
+        # Remove old unavailable servers
+        self.serverList = [server for server in self.serverList if server.test_availability()]
+        for item in lst:
+            server = Server("AddedByUser", item)
+            # if this server is available, add it to self.serverList
+            if server.test_availability():
+                self.serverList.append(server)
+        # Remove repeated items in self.serverList
+        # TODO: this should be checked using ip address of server
+        self.serverList = list(set(self.serverList))
+        logger.info(f"Successfully update server list, current count is {self.len()})")
 
     def len(self):
         return len(self.serverList)
@@ -167,4 +187,31 @@ class ServerList:
         instance.serverList = list()
         for serverName, serverIP in server_list.items():
             instance.serverList.append(Server(serverName, serverIP))
+        logger.info(f"Successfully create a {cls.__name__} instance using [specify_server_list]")
         return instance
+
+
+class FlaskTestServerList(ServerList):
+    def __init__(self):
+        super().__init__()
+
+    def update_server_from_interface(self, url: str):
+        """
+        Use interface which server provide to get all servers.
+        Server returned value format:
+        {
+            "data": [
+                "123.123.123.123",
+                "12.12.12.12",
+            ]
+        }
+        Purpose of this function is to parse this returned value
+        of specific interface and update self.serverList with new data.
+        :param url: request url of my flask server to get serverList
+        :return: None
+        """
+        r = requests.get(url)
+        logger.info(f"Call remote url {url} to get server list")
+        data = json.loads(r.text)["data"]
+        logger.info(f"Get {len(data)} server info from remote url {url}")
+        self.update_server_list_using_list(data)

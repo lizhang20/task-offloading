@@ -82,3 +82,23 @@ class ServerListTestCases(unittest.TestCase):
 
         self.assertIsInstance(server_list, ServerList)
         self.assertEqual(3, server_list.len())
+
+    def test_update_server_list(self):
+        d = {
+            "AWS": "95.69.98.253",
+            "GCP": "43.56.87.99",
+            "Azure": "123.123.33.44",
+        }
+        server_list = ServerList.specify_server_list(d)
+
+        self.assertEqual(server_list.len(), len(d))
+
+        lst = ["127.0.0.1", "128.0.0.0"]
+        server_list.update_server_list_using_list(lst)
+
+        self.assertEqual(server_list.len(), 1)
+        server_list.print_all_servers()
+
+
+
+
