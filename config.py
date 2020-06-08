@@ -27,8 +27,9 @@ class SmartContractConfig(Config):
     #                   }
     offloadingFlag = dict()
 
-    def __init__(self):
-        pass
+    server_list = {
+        "PC": "127.0.0.1",
+    }
 
 
 config = {

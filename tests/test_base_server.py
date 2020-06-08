@@ -23,6 +23,14 @@ class ServerTestCases(unittest.TestCase):
         res = server3.test_availability()
         self.assertFalse(res)
 
+    def test_server_equal(self):
+        server1 = Server("s1", "127.0.0.1")
+        server2 = Server("s2", "127.0.0.1")
+        self.assertEqual(server2, server1)
+        server_set = set()
+        server_set.add(server1)
+        server_set.add(server2)
+
 
 class ServerListTestCases(unittest.TestCase):
 
@@ -62,8 +70,7 @@ class ServerListTestCases(unittest.TestCase):
 
         self.assertIsInstance(chosen_server, Server)
 
-        self.assertEqual("PC", chosen_server.serverName)
-        self.assertEqual("127.0.0.1", chosen_server.serverIP)
+        self.assertTrue(chosen_server in server_list.serverList)
 
         # self.assertEqual("vagrant-ubuntu", chosen_server.serverName)
         # self.assertEqual("192.168.56.2", chosen_server.serverIP)
@@ -73,12 +80,12 @@ class ServerListTestCases(unittest.TestCase):
             "AWS": "95.69.98.253",
             "GCP": "43.56.87.99",
             "Azure": "123.123.33.44",
+            "AWS1": "95.69.98.253",
+            "GCP1": "43.56.87.99",
+            "Azure1": "123.123.33.44",
         }
 
         server_list = ServerList.specify_server_list(d)
-
-        for i in range(3):
-            print(server_list.select_random_server())
 
         self.assertIsInstance(server_list, ServerList)
         self.assertEqual(3, server_list.len())
@@ -99,6 +106,10 @@ class ServerListTestCases(unittest.TestCase):
         self.assertEqual(server_list.len(), 1)
         server_list.print_all_servers()
 
+    def test_server_list_duplicated_items(self):
+        server_list = ServerList()
+        self.assertEqual(server_list.len(), 2)
 
-
-
+        added_server = ["127.0.0.1", "127.0.0.1", "192.168.56.2"]
+        server_list.update_server_list_using_list(added_server)
+        self.assertEqual(server_list.len(), 2)

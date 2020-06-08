@@ -33,6 +33,17 @@ class Server:
     def __repr__(self):
         return f"Server({self.serverName}, {self.serverIP})"
 
+    def __eq__(self, other):
+        """
+        Check whether Server1 is equal to Server2, depends on their serverIP.
+
+        If you define a __eq__() method, you must define a __hash__() method.
+        """
+        return self.serverIP == other.serverIP
+
+    def __hash__(self):
+        return hash(self.serverIP)
+
     def test_availability(self):
         """
         Using ping command to test availability of this server,
@@ -104,7 +115,6 @@ class ServerList:
             if server.test_availability():
                 self.serverList.append(server)
         # Remove repeated items in self.serverList
-        # TODO: this should be checked using ip address of server
         self.serverList = list(set(self.serverList))
         logger.info(f"Successfully update server list, current count is {self.len()})")
 
@@ -202,6 +212,8 @@ class ServerList:
         instance.serverList = list()
         for serverName, serverIP in server_list.items():
             instance.serverList.append(Server(serverName, serverIP))
+        # Remove duplicated serverIP
+        instance.serverList = list(set(instance.serverList))
         logger.info(f"Successfully create a {cls.__name__} instance using [specify_server_list]")
         return instance
 
