@@ -32,7 +32,7 @@ class DecisionEngine:
     def __init__(self, *, decision_algorithm: str, task_queue: Queue, server_list: ServerList, max_workers: int = 20):
         # Now decision_func is a str
         self.decision_func = Config.decision_algorithm[decision_algorithm]
-        # A task queue which add tasks to
+        # Useless yet
         self.task_queue = task_queue
         # Current server list
         self.server_list = server_list

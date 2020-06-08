@@ -6,7 +6,6 @@ from loguru import logger
 
 from engine import DecisionEngine, TaskInfo
 from server import ServerList, FlaskTestServerList
-from taskqueue import TaskQueue
 from interfaces import FlaskTestInterfaces
 
 app = Flask(__name__)
@@ -18,8 +17,6 @@ de = DecisionEngine(decision_algorithm="default",
                     task_queue=task_queue,
                     server_list=server_list,
                     max_workers=20)
-# TaskQueue instance
-tq = TaskQueue(task_queue=task_queue)
 
 
 # Error handler with invalid interfaces on this flask server
