@@ -28,7 +28,7 @@ class SmartContractConfig(Config):
     offloadingFlag = dict()
 
     server_list = {
-        "PC": "127.0.0.1",
+        "vagrant-ubuntu": "192.168.56.2",
     }
 
 

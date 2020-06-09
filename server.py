@@ -225,3 +225,8 @@ class FlaskTestServerList(ServerList):
         instance = ServerList("FlaskTestConfig")
         """
         super().__init__("FlaskTestConfig")
+
+
+class BDContractServerList(ServerList):
+    def __init__(self):
+        super().__init__("SmartContractConfig")

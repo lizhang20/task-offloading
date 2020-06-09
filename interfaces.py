@@ -34,6 +34,8 @@ class FlaskTestInterfaces(BaseInterfaces):
 
 
 class BDInterfaces(BaseInterfaces):
+    default_port: int = 8080
+    url_prefix: str = "SCIDE/"
 
     def list_all_interfaces(self):
         logger.info("Get all interfaces of class: BDInterfaces")
@@ -42,8 +44,13 @@ class BDInterfaces(BaseInterfaces):
         for method in method_list:
             print(method)
 
-    def interfaces1(self):
-        pass
+    @staticmethod
+    def ping_pong():
+        return BDInterfaces.url_prefix + "SCManager?action=ping"
+
+    @staticmethod
+    def list_CProcess():
+        return BDInterfaces.url_prefix + "SCManager?action=listContractProcess"
 
     def interfaces2(self):
         pass
