@@ -2,9 +2,11 @@
 
 from typing import NamedTuple
 import random
+import json
 
 from loguru import logger
 from ping3 import ping
+import requests
 
 import config
 
@@ -101,7 +103,7 @@ class ServerList:
         logger.info(f"Successfully reading {cnt} server list from config file")
         return cnt
 
-    def update_server_list_using_list(self, lst: list):
+    def update_server_list_using_list(self, lst: list, server_name: str = "AddedByUser"):
         """
         Update self.serverList with a list param.
         :return: None
@@ -110,13 +112,13 @@ class ServerList:
         # Remove old unavailable servers
         self.serverList = [server for server in self.serverList if server.test_availability()]
         for item in lst:
-            server = Server("AddedByUser", item)
+            server = Server(server_name, item)
             # if this server is available, add it to self.serverList
             if server.test_availability():
                 self.serverList.append(server)
         # Remove repeated items in self.serverList
         self.serverList = list(set(self.serverList))
-        logger.info(f"Successfully update server list, current count is {self.len()})")
+        logger.info(f"Successfully update server list, current count is {self.len()}")
 
     def len(self):
         return len(self.serverList)
@@ -225,6 +227,45 @@ class FlaskTestServerList(ServerList):
         instance = ServerList("FlaskTestConfig")
         """
         super().__init__("FlaskTestConfig")
+
+    @classmethod
+    def init_server_list_from_url(cls, url: str):
+        """
+        ServerList initialization by requesting a specific url that server provide
+        to get all servers.
+        In FlaskTestInterface, the request url is
+
+        "http://server:ip/getdserverlists",
+
+        Returned data is
+
+        {
+        "data": [
+            "127.0.0.1",
+            "192.168.56.2"
+        ]
+        }
+
+        Purpose of this method is to request this interface, get data back, parse it,
+        use this list to initialize self.serverList, and return this ServerList instance.
+
+        :param url: The url that server provides that this function request to get
+        all servers.
+        :return: A FlaskTestServerList instance.
+        """
+        logger.info(f"Starting create a {cls.__name__} instance by getting server from {url}")
+        r = requests.get(url)
+        # According to response data, get a server list
+        response_servers = json.loads(r.text).get("data")
+
+        instance = cls.__new__(cls)
+        instance.serverList = list()
+        instance.update_server_list_using_list(lst=response_servers,
+                                               server_name="AddedFromRemote")
+        # Remove duplicated serverIP
+        instance.serverList = list(set(instance.serverList))
+        logger.info(f"Successfully create a {cls.__name__} instance using [init_server_list_from_url]")
+        return instance
 
 
 class BDContractServerList(ServerList):

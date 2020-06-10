@@ -23,6 +23,12 @@ class FlaskTestServerListTestCase(unittest.TestCase):
         server_list.update_server_list_using_list(new_servers)
         server_list.print_all_servers()
 
+    def test_init_server_from_url(self):
+        server_list = FlaskTestServerList().init_server_list_from_url("http://127.0.0.1:5000/getserverlists")
+        self.assertEqual(server_list.len(), 3)
+
+        server_list.print_all_servers()
+
 
 if __name__ == '__main__':
     unittest.main()
