@@ -8,13 +8,11 @@ Users can access interfaces defined in a flask server to get the result server r
 
 ## Table of Content
 
-<!-- TOC -->
-
 - [Table of Content](#table-of-content)
 - [Code Structure](#code-structure)
 - [Install](#install)
-
-<!-- /TOC -->
+- [Usage](#usage)
+- [License](#license)
 
 ## Code Structure
 
@@ -45,3 +43,31 @@ Application servers:
 ```
 pip install -r requirements.txt
 ```
+
+## Usage
+
+### Testing a simple flask server
+
+In `app.py`, I defined some interfaces to access remote servers, where serverside code is in folder `flask_test_example/`. So before you run this client, you need to run serverside code on different servers. See how to run in `flask_test_example/README.md`.
+
+After this, you can configure `FlaskTestConfig.server_list` in `config.py`, ensure server list initialization using default constructor get correct servers.
+
+Then, run this offloading client using `sudo flask run` :
+
+```bash
+export FLASK_APP=app.py
+sudo flask run --port=[port]
+```
+
+Then you can access interfaces provided by this flask server, the server will call remote server to run tasks and get results back to you. Such as:
+
+```bash
+$ curl http://localhost:[port]/square/20
+{"data":"400.0","time":2.008405923843384}
+```
+
+Offloading details can be seen in logs of this offloading client.
+
+## License
+
+MIT © 2020 Li Zhang
