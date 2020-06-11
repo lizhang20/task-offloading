@@ -2,7 +2,9 @@
 
 A simple task offloading client for HTTP requests to offload tasks to an edge server, resulting in efficient computation and low delay costs.
 
-This client supports flexible task interface definition, automation task offloading process,  easy to specify task execution location. Users can access interfaces they defined in a flask server, by accessing them to get the right result that the server returned, nevermind how tasks send to these servers or get the result back.
+This client supports **flexible task interface definition**, **automatic task offloading process**,  **easy to specify task execution server**. 
+
+Users can access interfaces defined in a flask server to get the result server returned, nevermind how tasks send to these servers or how to get results back.
 
 ## Table of Content
 
@@ -33,6 +35,8 @@ This client supports flexible task interface definition, automation task offload
 Application servers:
 
 - `app.py` is associated with `FlaskTestConfig (config.py)`, `FlaskTestServerInterfaces (interfaces.py)`, `FlaskTestServerList (server.py)`. It defines a series of simple interfaces that can be accessed by users to indicate how to use the components mentioned before and how to program using this task offloading client.
+
+  >Serverside code is in `flask_test_example/`. Before using this offloading client, run serverside code on different servers.
 
 - `bdcontract.py` is another application for offloading smart contract.
 
