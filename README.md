@@ -40,6 +40,8 @@ Application servers:
 
 ## Install
 
+This project is implemented using Python 3.7, so Python 3.7 or above is required.
+
 ```
 pip install -r requirements.txt
 ```
