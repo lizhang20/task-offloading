@@ -10,6 +10,7 @@ Users can access interfaces defined in a flask server to get the result server r
 
 - [Table of Content](#table-of-content)
 - [Code Structure](#code-structure)
+- [Process Overview](#process-overview)
 - [Install](#install)
 - [Usage](#usage)
 - [License](#license)
@@ -37,6 +38,10 @@ Application servers:
   >Serverside code is in `flask_test_example/`. Before using this offloading client, run serverside code on different servers.
 
 - `bdcontract.py` is another application for offloading smart contract.
+
+## Process Overview
+
+![process overview](docs/task-offloading.png)
 
 ## Install
 
