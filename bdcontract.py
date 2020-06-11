@@ -40,13 +40,30 @@ def ping_pong():
 def list_contract_process():
     """
     Call this interface for specific server:
-        curl http://localhost:port/listcontractprocess?server=contract.internetapi.cn
-    :return:
+        curl http://localhost:port/listcontractprocess?server=[serverIP]
     """
-    logger.info("Client interface list_contract_process(route'/listcontractprocess') has been called")
-    param = request.args.get("server")
-    server_ip = param if param else None
+    logger.info(f"Client interface list_contract_process(url: {request.url}) has been called")
+    # if value is not set, request.args.get() function will return None
+    server_ip = request.args.get("server")
     task = BDInterfaces.list_CProcess()
+    ret = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
+    return ret.result().text
+
+
+@app.route("/execcontract")
+def execute_contract():
+    """
+    Call this interface:
+        curl http://localhost:port/execcontract?contractID=[contractID]&operation=[operation]&arg=[arg]&server=[serverIP]
+    An example is :
+        curl http://localhost:port/execcontract?contractID=-620602333&operation=main&arg=hhh
+    """
+    logger.info(f"Client interface execute_contract(url: {request.url}) has been called")
+    contractID = request.args.get("contractID")
+    operation = request.args.get("operation")
+    arg = request.args.get("arg")
+    server_ip = request.args.get("server")
+    task = BDInterfaces.execute_contract(contractID=contractID, operation=operation, arg=arg)
     ret = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
     return ret.result().text
 
