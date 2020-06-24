@@ -1,8 +1,10 @@
 # This is data structure for server info in this application.
 
 from typing import NamedTuple
+from concurrent.futures import ThreadPoolExecutor
 import random
 import json
+import time
 
 from loguru import logger
 from ping3 import ping
@@ -16,7 +18,11 @@ class ServerInfo(NamedTuple):
     This is a NamedTuple in server.availability list
     """
     available: bool
+    # A delay between host and remove server tested by ping command
+    # If not available, delay = 0.0 ms
     delay: float
+    # Unix timestamp created by time.time()
+    timestamp: float
 
 
 class Server:
@@ -60,15 +66,15 @@ class Server:
         response = ping(f"{self.serverIP}", unit="ms")
         if not response:
             logger.info(f"Testing server availability failed: unknown host {self.__repr__()}")
-            self.availability.append(ServerInfo(False, 0))
+            self.availability.append(ServerInfo(False, 0, time.time()))
             return False
         elif response is None:
             logger.info(f"Testing server availability failed: timeout {self.__repr__()}")
-            self.availability.append(ServerInfo(False, 0))
+            self.availability.append(ServerInfo(False, 0, time.time()))
             return False
         else:
-            logger.info(f"Testing server availability success: time {response}ms")
-            self.availability.append(ServerInfo(True, response))
+            logger.info(f"Testing server availability success: server {self.__repr__()}, time {response}ms")
+            self.availability.append(ServerInfo(True, response, time.time()))
             return True
 
 
@@ -149,16 +155,29 @@ class ServerList:
         use this function to select server.
         :return: If found, return a Server instance, else None.
         """
+        # a thread pool to submit tasks for ping command
+        pool = ThreadPoolExecutor(max_workers=len(self.serverList))
+        # store all futures returned by pool.submit() method
+        futures = []
+
         # default max is 3000.0 ms = 3 s
         min_ping: float = 3000.0
         # default min_ping_server is None, if all server is not available,
         # just return None, let calling function deal with None.
         min_ping_server: Server = None
+
         for server in self.serverList:
-            ret = ping(server.serverIP, unit="ms")
-            if isinstance(ret, float) and ret < min_ping:
-                min_ping = ret
-                min_ping_server = server
+            future = pool.submit(server.test_availability)
+            futures.append(future)
+        # wait all thread get the result
+        [future.result() for future in futures]
+
+        for server in self.serverList:
+            this_delay = server.availability[0].delay
+            if isinstance(this_delay, float):
+                if this_delay < min_ping:
+                    min_ping = this_delay
+                    min_ping_server = server
         return min_ping_server
 
     def select_random_server(self):

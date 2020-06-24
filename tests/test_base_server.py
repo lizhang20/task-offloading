@@ -31,6 +31,17 @@ class ServerTestCases(unittest.TestCase):
         server_set.add(server1)
         server_set.add(server2)
 
+    def test_availability(self):
+        server1 = Server("s1", "127.0.0.1")
+        server2 = Server("s2", "149.129.98.105")
+        server1.test_availability()
+        for i in range(10):
+            server2.test_availability()
+        self.assertEqual(len(server1.availability), 1)
+        self.assertEqual(len(server2.availability), 10)
+        print(server1.availability)
+        print(server2.availability)
+
 
 class ServerListTestCases(unittest.TestCase):
 
@@ -58,6 +69,13 @@ class ServerListTestCases(unittest.TestCase):
 
         self.assertEqual("PC", chosen_server.serverName)
         self.assertEqual("127.0.0.1", chosen_server.serverIP)
+
+        server_list = ServerList.specify_server_list({
+            "qq": "192.0.78.251",
+            "baidu": "39.156.69.79",
+        })
+        chosen_server = server_list.select_min_ping_server()
+        print(chosen_server)
 
     def test_select_random_server(self):
         """
