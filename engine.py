@@ -67,7 +67,7 @@ class DecisionEngine:
         :param port: This task run on server specific port, if not specified, use 80.
         :param ip  : Server ip address where you want to run your task.
         :return: If chosen_server=self.choose_server is None, return None;
-                 else result returned by Thread (a Future object).
+                 else return [Future, Server.serverIP]
         """
         chosen_server = Server("UserSpecific", ip) if ip else self.choose_server()
         if chosen_server is None:
@@ -77,7 +77,7 @@ class DecisionEngine:
         logger.info(f"Successfully submit task {task_added} to ThreadPool")
         # Don't return .results() here, only you call results() method
         # it will block.
-        return self.pool.submit(self.offload_task, task_added)
+        return self.pool.submit(self.offload_task, task_added), chosen_server.serverIP
 
     def offload_task(self, data: TaskInfo):
         """
