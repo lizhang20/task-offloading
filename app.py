@@ -1,4 +1,3 @@
-from queue import Queue
 import json
 import time
 
@@ -11,13 +10,11 @@ from interfaces import FlaskTestInterfaces
 
 app = Flask(__name__)
 server_list = FlaskTestServerList()
-task_queue = Queue()
 # DecisionEngine instance's decision algorithm: minimum_ping_delay
 # see more info in config.py
-de = DecisionEngine(decision_algorithm="default",
-                    task_queue=task_queue,
-                    server_list=server_list,
-                    max_workers=20)
+de = DecisionEngine(
+    decision_algorithm="minimum_ping_delay", server_list=server_list, max_workers=20
+)
 
 
 # Error handler with invalid interfaces on this flask server
@@ -45,10 +42,11 @@ def hello_world():
     task = FlaskTestInterfaces.hello_world()
     ret, server = de.submit_task(task=task, port=FlaskTestInterfaces.default_port)
     data = ret.result().text
-    status_code = ret.result().status_code
     # get the result from offloading task, then calculate total time
     total_time = time.time() - st
-    return jsonify(data=data, server=server, status_code=status_code, time=total_time)
+    return jsonify(
+        data=data, server=server, status_code=ret.result().status_code, time=total_time
+    )
 
 
 @app.route("/square/<num>")
@@ -61,14 +59,17 @@ def square(num):
         "time": offloading total time,
     }
     """
-    logger.info(f"Client interface square(route'/square/<num>') has been called with param {num}")
+    logger.info(
+        f"Client interface square(route'/square/<num>') has been called with param {num}"
+    )
     st = time.time()
     task = FlaskTestInterfaces.get_double(num)
     ret, server = de.submit_task(task=task, port=FlaskTestInterfaces.default_port)
     data = ret.result().text
-    status_code = ret.result().status_code
     total_time = time.time() - st
-    return jsonify(data=data, server=server, status_code=status_code, time=total_time)
+    return jsonify(
+        data=data, server=server, status_code=ret.result().status_code, time=total_time
+    )
 
 
 @app.route("/getserverlists")
@@ -83,15 +84,18 @@ def get_server_lists():
         "time": 0.003...,
     }
     """
-    logger.info("Client interface getserverlists(route'/getserverlists') has been called")
+    logger.info(
+        "Client interface getserverlists(route'/getserverlists') has been called"
+    )
     st = time.time()
     task = FlaskTestInterfaces.get_server()
     ret, server = de.submit_task(task, port=FlaskTestInterfaces.default_port)
     data = ret.result().text
-    status_code = ret.result().status_code
     total_time = time.time() - st
     data = json.loads(data)["data"]
-    return jsonify(data=data, server=server, status_code=status_code, time=total_time)
+    return jsonify(
+        data=data, server=server, status_code=ret.result().status_code, time=total_time
+    )
 
 
 @app.route("/listservers")
@@ -131,4 +135,6 @@ def update_servers_from_remote():
     total_time = time.time() - st
     ret_json = json.loads(data)
     de.server_list.update_server_list_using_list(ret_json["data"])
-    return jsonify(data=de.server_list.convert_to_ip_list(), server=server, time=total_time)
+    return jsonify(
+        data=de.server_list.convert_to_ip_list(), server=server, time=total_time
+    )

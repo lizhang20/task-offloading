@@ -10,11 +10,9 @@ from interfaces import BDInterfaces
 
 app = Flask(__name__)
 server_list = BDContractServerList()
-task_queue = Queue()
 # DecisionEngine instance's decision algorithm: minimum_ping_delay
 # see more info in config.py
 de = DecisionEngine(decision_algorithm="default",
-                    task_queue=task_queue,
                     server_list=server_list,
                     max_workers=20)
 

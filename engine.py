@@ -4,8 +4,6 @@
 # Task queue will send task to server and get feedback. (In another module)
 # If not, execute this task on this client.
 
-# Queue for task queue
-from queue import Queue
 from typing import NamedTuple
 from concurrent.futures import ThreadPoolExecutor
 
@@ -29,11 +27,9 @@ class TaskInfo(NamedTuple):
 
 class DecisionEngine:
 
-    def __init__(self, *, decision_algorithm: str, task_queue: Queue, server_list: ServerList, max_workers: int = 20):
+    def __init__(self, *, decision_algorithm: str, server_list: ServerList, max_workers: int = 20):
         # Now decision_func is a str
         self.decision_func = Config.decision_algorithm[decision_algorithm]
-        # Useless yet
-        self.task_queue = task_queue
         # Current server list
         self.server_list = server_list
         # A thread_pool to execute offloading tasks
