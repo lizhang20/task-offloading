@@ -129,6 +129,19 @@ class ServerList:
     def len(self):
         return len(self.serverList)
 
+    def contains_ip(self, ip: str):
+        """
+        Check if given ip is in this class instance.
+        Cause of self.serverList contains instance type: Server,
+        Server.__eq__() method compares two instances' ip address,
+        so, need to construct a Server("temp", ip) instance and then
+        check if in self.serverList.
+
+        :param ip: An ip address to check if in self.serverList.
+        :return: True or False.
+        """
+        return Server("temp", ip) in self.serverList
+
     def print_all_servers(self):
         """
         Print all server info in ServerList.
