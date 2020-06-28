@@ -142,6 +142,24 @@ class ServerList:
         """
         return Server("temp", ip) in self.serverList
 
+    def add_ip(self, ip):
+        """
+        Add single ip by construct a list, and use self.update_server_list_using_list()
+        :param ip: An ip address to be added to self.serverList.
+        :return: None
+        """
+        add_list = [ip]
+        self.update_server_list_using_list(add_list)
+
+    def remove_ip(self, ip: str):
+        """
+        Remove item which ip satisfied given ip.
+        :param ip: An ip address to be removed in self.serverList.
+        :return: None.
+        """
+        del_server = Server("deleted", ip)
+        self.serverList.remove(del_server)
+
     def print_all_servers(self):
         """
         Print all server info in ServerList.

@@ -145,3 +145,19 @@ class ServerListTestCases(unittest.TestCase):
         self.assertTrue(server_list.contains_ip("123.123.123.123"))
         self.assertFalse(server_list.contains_ip("888.888.888.889"))
         self.assertFalse(server_list.contains_ip("8.8.8.8"))
+
+    def test_add_remove_ip(self):
+        server_list = ServerList.specify_server_list(
+            {
+                "AWS": "123.123.123.123",
+                "GCP": "123.123.123.123",
+                "localhost": "127.0.0.1",
+            }
+        )
+
+        server_list.remove_ip("123.123.123.123")
+        self.assertEqual(server_list.len(), 1)
+
+        server_list.add_ip("8.8.8.8")
+        self.assertEqual(server_list.len(), 2)
+        server_list.print_all_servers()
