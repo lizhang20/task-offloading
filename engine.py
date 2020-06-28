@@ -22,15 +22,21 @@ class TaskInfo(NamedTuple):
     Port is related to specific task.
     So I add port into TaskInfo not Server.
     """
+
     server: Server
     task: str
     port: int
 
 
 class DecisionEngine:
-
-    def __init__(self, *, decision_algorithm: str, server_list: ServerList, max_workers: int = 20,
-                 consider_throughput: bool = False):
+    def __init__(
+        self,
+        *,
+        decision_algorithm: str,
+        server_list: ServerList,
+        max_workers: int = 20,
+        consider_throughput: bool = False,
+    ):
         # Now decision_func is a str
         self.decision_func = Config.decision_algorithm[decision_algorithm]
         # Current server list
@@ -55,7 +61,8 @@ class DecisionEngine:
         self.req_count = 0
 
         logger.info(
-            f"Initial DecisionEngine with decision_algorithm: [{decision_algorithm}], [{max_workers}] workers, throughput period [{self.default_throughput_period}] s")
+            f"Initial DecisionEngine with decision_algorithm: [{decision_algorithm}], [{max_workers}] workers, throughput period [{self.default_throughput_period}] s"
+        )
 
     def cal_throughput(self):
         """
@@ -68,7 +75,9 @@ class DecisionEngine:
         if self.end_time is None:
             self.end_time = time.time()
 
-        logger.info(f"Calculate throughput between [{self.start_time:.2f}, {self.end_time:.2f}]")
+        logger.info(
+            f"Calculate throughput between [{self.start_time:.2f}, {self.end_time:.2f}]"
+        )
 
         if self.req_count == 0:
             throughput = 0
@@ -93,7 +102,9 @@ class DecisionEngine:
             logger.info(f"Failed to choose server using {self.decision_func}")
             return None
         else:
-            logger.info(f"Successfully choose server {chosen_server} using {self.decision_func}")
+            logger.info(
+                f"Successfully choose server {chosen_server} using {self.decision_func}"
+            )
             return chosen_server
 
     def _choose_server_except_localhost(self):
@@ -136,17 +147,23 @@ class DecisionEngine:
                 logger.info("Compare current throughput with expected throughput...")
                 if self.cal_throughput() > self.expected_throughput:
                     # Choose another server expect local device
-                    logger.info("Current throughput is larger than expected throughput, " +
-                                "choose an server except local device")
+                    logger.info(
+                        "Current throughput is larger than expected throughput, "
+                        + "choose an server except local device"
+                    )
                     return self._choose_server_except_localhost()
                 else:
                     # Run this task on local device
-                    logger.info("Current throughput is not larger than expected throughput, "+
-                                "choose local device as execution location")
+                    logger.info(
+                        "Current throughput is not larger than expected throughput, "
+                        + "choose local device as execution location"
+                    )
                     return Server("local device", "127.0.0.1")
             else:
-                logger.info("This time period is no larger than throughput period, " +
-                            "choose local device as execution location")
+                logger.info(
+                    "This time period is no larger than throughput period, "
+                    + "choose local device as execution location"
+                )
                 # choose which server? now choose local server
                 # and in this period, run tasks on local server will add self.req_count
                 # when next calculate throughput, it will increase, and tasks can be
