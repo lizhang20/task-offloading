@@ -6,6 +6,7 @@
 
 import time
 import copy
+import bisect
 from typing import NamedTuple
 from concurrent.futures import ThreadPoolExecutor
 
@@ -30,12 +31,12 @@ class TaskInfo(NamedTuple):
 
 class DecisionEngine:
     def __init__(
-        self,
-        *,
-        decision_algorithm: str,
-        server_list: ServerList,
-        max_workers: int = 20,
-        consider_throughput: bool = False,
+            self,
+            *,
+            decision_algorithm: str,
+            server_list: ServerList,
+            max_workers: int = 20,
+            consider_throughput: bool = False,
     ):
         # Now decision_func is a str
         self.decision_func = Config.decision_algorithm[decision_algorithm]
@@ -53,12 +54,9 @@ class DecisionEngine:
         # calculate throughput once
         self.default_throughput_period: int = Config.DEFAULT_THROUGHPUT_PERIOD
         self.expected_throughput: int = Config.EXPECTED_THROUGHPUT
-        # start_time and end_time when in this period, DecisionEngine will calculate
-        # throughput per second
-        self.start_time = time.time()  # start_time is instance initialization time
-        self.end_time = None
-        # HTTP requests count in a period
-        self.req_count = 0
+        # A list to store all requests timestamp. Used to calculate throughput
+        # in a certain range times.
+        self.req_time_lst = list()
 
         logger.info(
             f"Initial DecisionEngine with decision_algorithm: [{decision_algorithm}], [{max_workers}] workers, throughput period [{self.default_throughput_period}] s"
@@ -67,27 +65,34 @@ class DecisionEngine:
     def cal_throughput(self):
         """
         Calculate throughput in a time period:
-            throughput = self.req_count / (end_time - start_time)
+            throughput = request_count_in_a_certain_time / default_throughput_period
+
+        All requests' timestamp is in self.req_time_lst, use bisection algorithm to
+        get the index that upper than start_time. Use length of self.req_time_lst minus
+        index get the request counts in this time period.
 
         :return: A float value of request processing per second.
         """
-        # Test if end_time is not None
-        if self.end_time is None:
-            self.end_time = time.time()
+        cur_time = time.time()
+        # Time range to calculate throughput is
+        # [cur_time - self.default_throughput_period, cur_time)
+        # So start_time = cur_time - DEFAULT_THROUGHPUT_PERIOD
+        start_time = cur_time - self.default_throughput_period
 
-        logger.info(
-            f"Calculate throughput between [{self.start_time:.2f}, {self.end_time:.2f}]"
-        )
-
-        if self.req_count == 0:
-            throughput = 0
-        else:
-            throughput = self.req_count / (self.end_time - self.start_time)
-
-        # Reset throughput variables
-        self.start_time = time.time()
-        self.end_time = None
-        self.req_count = 0
+        # Use bisection algorithm to find items in range, get the first index that
+        # self.req_time_lst(index) > start_time
+        # bisect.bisect_right can only deal with sorted arrays, so sorted first.
+        #
+        # Something wrong here is that if there is an item equals to start_time,
+        # it will not be calculated. But it doesn't matters. It's to hard to
+        # produce two same timestamps.
+        #
+        # Equals to upper_bound in C++
+        # https://stackoverflow.com/questions/29471884/get-the-immediate-minimum-among-a-list-of-numbers-in-python
+        # https://docs.python.org/3.6/library/bisect.html
+        self.req_time_lst.sort()
+        req_st_index = bisect.bisect_right(self.req_time_lst, start_time)
+        throughput = len(self.req_time_lst) - req_st_index
 
         return throughput
 
@@ -137,37 +142,25 @@ class DecisionEngine:
         # If there is not a server returned by decision function, func() will return None.
 
         if self.consider_throughout and self.server_list.contains_ip("127.0.0.1"):
-            # Consider throughput on local device, if it's larger than default throughput,
-            # choose server and offload requests.
-            logger.info("Choose server consider throughput")
-
             # Check if DecisionEngine can use local device to handle request.
             # In other word, check if 127.0.0.1 is in self.server_list
-            if (time.time() - self.start_time) > self.default_throughput_period:
-                logger.info("Compare current throughput with expected throughput...")
-                if self.cal_throughput() > self.expected_throughput:
-                    # Choose another server expect local device
-                    logger.info(
-                        "Current throughput is larger than expected throughput, "
-                        + "choose an server except local device"
-                    )
-                    return self._choose_server_except_localhost()
-                else:
-                    # Run this task on local device
-                    logger.info(
-                        "Current throughput is not larger than expected throughput, "
-                        + "choose local device as execution location"
-                    )
-                    return Server("local device", "127.0.0.1")
-            else:
+            logger.info("Choose server consider throughput")
+
+            # Consider throughput on local device, if it's larger than default throughput,
+            # choose server and offload requests.
+            if self.cal_throughput() > self.expected_throughput:
+                # Choose another server expect local device
                 logger.info(
-                    "This time period is no larger than throughput period, "
+                    "Current throughput is larger than expected throughput, "
+                    + "choose an server except local device"
+                )
+                return self._choose_server_except_localhost()
+            else:
+                # Run this task on local device
+                logger.info(
+                    "Current throughput is not larger than expected throughput, "
                     + "choose local device as execution location"
                 )
-                # choose which server? now choose local server
-                # and in this period, run tasks on local server will add self.req_count
-                # when next calculate throughput, it will increase, and tasks can be
-                # offloaded to other servers.
                 return Server("local device", "127.0.0.1")
         else:
             # Not consider throughout on local device, using self.decision_algorithm to
@@ -203,10 +196,18 @@ class DecisionEngine:
                  response of requests.get() method. So when you print this response,
                  you will get a HTTP response code.
         """
+        # Add current time to self.req_time_lst. For calculating throughput on
+        # this local device future.
+        # Notes that this operation is in a new thread.
+        # NECESSARILY NEED A LOCK HERE???
+        # I THINK NOT NECESSARY.
+        cur_time = time.time()
+        self.req_time_lst.append(cur_time)
+        logger.info(f"Get task {data} and start offloading." +
+                    f" Current time is {cur_time:.2f}, add to req_time_lst")
+
         # data is a TaskInfo(server: Server, task: str, port: int)
         # data = self.task_queue.get()
-        logger.info(f"Get task {data} and start offloading")
-
         server = data.server
         task = data.task
         port = data.port
