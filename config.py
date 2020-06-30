@@ -10,12 +10,12 @@ class Config:
     }
 
     # default_throughput_period is 3 seconds
-    DEFAULT_THROUGHPUT_PERIOD = 3
+    DEFAULT_THROUGHPUT_PERIOD = 1
 
     # User expected throughput in local device, which means that
     # this is max number of requests per second processed on local device,
     # if more than this, offload requests to remote servers.
-    EXPECTED_THROUGHPUT = 20
+    EXPECTED_THROUGHPUT = 10
 
 
 class FlaskTestConfig(Config):
