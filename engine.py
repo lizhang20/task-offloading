@@ -161,7 +161,7 @@ class DecisionEngine:
                     "Current throughput is not larger than expected throughput, "
                     + "choose local device as execution location"
                 )
-                return Server("local device", "127.0.0.1")
+                return Server("LocalDevice", "127.0.0.1")
         else:
             # Not consider throughout on local device, using self.decision_algorithm to
             # choose server

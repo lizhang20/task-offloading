@@ -1,6 +1,6 @@
 class Config:
     server_list = {
-        "PC": "127.0.0.1",
+        "LocalDevice": "127.0.0.1",
         "vagrant-ubuntu": "192.168.56.2",
     }
 
@@ -20,7 +20,7 @@ class Config:
 
 class FlaskTestConfig(Config):
     server_list = {
-        "PC": "127.0.0.1",
+        "LocalDevice": "127.0.0.1",
         "vagrant-ubuntu": "192.168.56.2",
     }
 

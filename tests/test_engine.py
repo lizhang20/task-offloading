@@ -45,30 +45,29 @@ class EngineTestCase(unittest.TestCase):
         self.assertTrue(de.server_list.contains_ip("127.0.0.1"))
         de.server_list.print_all_servers()
 
+        # throughput larger than expected throughput
+        for i in range(20):
+            de.req_time_lst.append(time.time())
+        chosen_server = de.choose_server()
+        print(chosen_server)
+        self.assertFalse(chosen_server == Server("temp", "127.0.0.1"))
+
+        # throughput not larger than expected throughput
         time.sleep(3)
+        for i in range(5):
+            de.req_time_lst.append(time.time())
         chosen_server = de.choose_server()
         print(chosen_server)
+        self.assertTrue(chosen_server == Server("temp", "127.0.0.1"))
 
-        # time larger than throughput
-        # throughput larger than expected throughput
+        # throughput not larger than expected throughput
         time.sleep(3)
-        de.req_count = 100
+        for i in range(20):
+            time.sleep(0.2)
+            de.req_time_lst.append(time.time())
         chosen_server = de.choose_server()
         print(chosen_server)
-
-        # time no larger than throughput period
-        # throughput larger than expected throughput
-        time.sleep(2.9)
-        de.req_count = 100
-        chosen_server = de.choose_server()
-        print(chosen_server)
-
-        # sleep more than 1 sec
-        # time will larger than throughput period
-        # throughput larger than expected throughput
-        time.sleep(1)
-        chosen_server = de.choose_server()
-        print(chosen_server)
+        self.assertTrue(chosen_server == Server("temp", "127.0.0.1"))
 
     def test_submit_task(self):
         server_list = ServerList()
@@ -89,23 +88,21 @@ class EngineTestCase(unittest.TestCase):
         server_list = ServerList()
         de = DecisionEngine(decision_algorithm="default", server_list=server_list)
 
-        self.assertEqual(de.default_throughput_period, 3)
-        self.assertEqual(de.expected_throughput, 20)
+        self.assertEqual(de.default_throughput_period, Config.DEFAULT_THROUGHPUT_PERIOD)
+        self.assertEqual(de.expected_throughput, Config.EXPECTED_THROUGHPUT)
 
-        time_format = "%Y-%m-%d %H:%M:%S"
-        time_str = time.strftime(time_format, time.localtime(de.start_time))
-        print(time_str)
+        for i in range(20):
+            time.sleep(0.1)
+            de.req_time_lst.append(time.time())
 
-        time.sleep(1)
-        de.req_count = 20
-        print(de.cal_throughput())
+        self.assertEqual(de.cal_throughput(), de.default_throughput_period / 0.1)
 
-        time.sleep(4)
-        de.req_count = 100
-        print(de.cal_throughput())
+        for i in range(20):
+            time.sleep(0.2)
+            de.req_time_lst.append(time.time())
 
+        self.assertEqual(de.cal_throughput(), de.default_throughput_period / 0.2)
 
 
 if __name__ == '__main__':
     unittest.main()
-
