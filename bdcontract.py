@@ -30,7 +30,7 @@ app.register_error_handler(404, resource_not_found)
 def ping_pong():
     logger.info("Client interface ping_pong(route'/ping') has been called")
     task = BDInterfaces.ping_pong()
-    ret = de.submit_task(task=task, port=BDInterfaces.default_port)
+    ret, _ = de.submit_task(task=task, port=BDInterfaces.default_port)
     return ret.result().text
 
 
@@ -44,7 +44,7 @@ def list_contract_process():
     # if value is not set, request.args.get() function will return None
     server_ip = request.args.get("server")
     task = BDInterfaces.list_CProcess()
-    ret = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
+    ret, _ = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
     return ret.result().text
 
 
@@ -52,17 +52,39 @@ def list_contract_process():
 def execute_contract():
     """
     Call this interface:
-        curl http://localhost:port/execcontract?contractID=[contractID]&operation=[operation]&arg=[arg]&server=[serverIP]
+        curl http://localhost:port/execcontract?contractID=[contractID]&operation=[operation] \
+        &arg=[arg]&requestID=[requestID]&server=[serverIP]
     An example is :
         curl http://localhost:port/execcontract?contractID=-620602333&operation=main&arg=hhh
     """
     logger.info(f"Client interface execute_contract(url: {request.url}) has been called")
-    contractID = request.args.get("contractID")
+    contract_id = request.args.get("contractID")
     operation = request.args.get("operation")
     arg = request.args.get("arg")
+    request_id = request.args.get("requestID")
     server_ip = request.args.get("server")
-    task = BDInterfaces.execute_contract(contractID=contractID, operation=operation, arg=arg)
-    ret = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
+    task = BDInterfaces.execute_contract(contractID=contract_id, operation=operation, arg=arg, request_id=request_id)
+    ret, _ = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
+    return ret.result().text
+
+
+@app.route("/hello")
+def hello_world():
+    """
+    Construct hello method on smart contract.
+
+    An example is :
+        curl http://127.0.0.1:8899/hello?server=192.168.0.106
+    """
+    logger.info(f"Client interface hello(url: {request.url}) has been called")
+    task = BDInterfaces.execute_contract(
+        contractID="Hello",
+        operation="hello",
+        arg="hhh",
+        request_id="123456",
+    )
+    server_ip = request.args.get("server")
+    ret, _ = de.submit_task(task, port=BDInterfaces.default_port, ip=server_ip)
     return ret.result().text
 
 

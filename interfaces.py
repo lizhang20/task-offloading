@@ -56,11 +56,17 @@ class BDInterfaces(BaseInterfaces):
         return BDInterfaces.url_prefix + "SCManager?action=listContractProcess"
 
     @staticmethod
-    def execute_contract(contractID: str, operation: str, arg: str = None):
+    def hello_world():
+        return BDInterfaces.url_prefix
+
+    @staticmethod
+    def execute_contract(*, contractID: str, operation: str, arg: str = None, request_id: str = None):
         if arg:
-            return BDInterfaces.url_prefix + f"SCManager?action=executeContract&contractID={contractID}&operation={operation}&arg={arg} "
+            return BDInterfaces.url_prefix + f"SCManager?action=executeContract&contractID={contractID}&" \
+                                             f"operation={operation}&arg={arg}&requestID={request_id}"
         else:
-            return BDInterfaces.url_prefix + f"SCManager?action=executeContract&contractID={contractID}&operation={operation}"
+            return BDInterfaces.url_prefix + f"SCManager?action=executeContract&contractID={contractID}&" \
+                                             f"operation={operation}"
 
     def interfaces2(self):
         pass

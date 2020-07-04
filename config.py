@@ -40,6 +40,7 @@ class SmartContractConfig(Config):
 
     server_list = {
         "vagrant-ubuntu": "192.168.56.2",
+        "ubuntu2004": "192.168.0.106",
     }
 
     port = 18000
