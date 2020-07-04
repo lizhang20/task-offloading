@@ -13,7 +13,10 @@ server_list = FlaskTestServerList()
 # DecisionEngine instance's decision algorithm: minimum_ping_delay
 # see more info in config.py
 de = DecisionEngine(
-    decision_algorithm="minimum_ping_delay", server_list=server_list, max_workers=20
+    decision_algorithm="minimum_ping_delay",
+    server_list=server_list,
+    max_workers=20,
+    consider_throughput=True
 )
 
 
@@ -45,7 +48,8 @@ def hello_world():
     # get the result from offloading task, then calculate total time
     total_time = time.time() - st
     return jsonify(
-        data=data, server=server, status_code=ret.result().status_code, time=total_time
+        data=data, server=server, status_code=ret.result().status_code, time=total_time,
+        throughput=de.cal_throughput(),
     )
 
 

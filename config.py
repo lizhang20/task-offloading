@@ -15,14 +15,17 @@ class Config:
     # User expected throughput in local device, which means that
     # this is max number of requests per second processed on local device,
     # if more than this, offload requests to remote servers.
-    EXPECTED_THROUGHPUT = 10
+    EXPECTED_THROUGHPUT = 50
 
 
 class FlaskTestConfig(Config):
     server_list = {
         "LocalDevice": "127.0.0.1",
-        "vagrant-ubuntu": "192.168.56.2",
+        "vagrant-ubuntu1": "192.168.56.2",
+        "vagrant-ubuntu2": "192.168.56.3",
     }
+
+    port = 5000
 
 
 class SmartContractConfig(Config):
@@ -38,6 +41,8 @@ class SmartContractConfig(Config):
     server_list = {
         "vagrant-ubuntu": "192.168.56.2",
     }
+
+    port = 18000
 
 
 config = {

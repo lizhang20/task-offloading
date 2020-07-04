@@ -3,6 +3,9 @@ import abc
 from loguru import logger
 
 
+from config import Config, FlaskTestConfig, SmartContractConfig
+
+
 class BaseInterfaces(abc.ABC):
 
     @abc.abstractmethod
@@ -11,7 +14,7 @@ class BaseInterfaces(abc.ABC):
 
 
 class FlaskTestInterfaces(BaseInterfaces):
-    default_port: int = 5000
+    default_port: int = FlaskTestConfig.port
 
     def list_all_interfaces(self):
         logger.info("Get all interfaces of class: FlaskTestInterfaces")
@@ -34,7 +37,7 @@ class FlaskTestInterfaces(BaseInterfaces):
 
 
 class BDInterfaces(BaseInterfaces):
-    default_port: int = 8080
+    default_port: int = SmartContractConfig.port
     url_prefix: str = "SCIDE/"
 
     def list_all_interfaces(self):
