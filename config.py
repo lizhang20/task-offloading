@@ -40,6 +40,7 @@ class SmartContractConfig(Config):
 
     server_list = {
         "ubuntu2004": "192.168.0.106",
+        "manjaro": "192.168.0.102",
     }
 
     port = 18000

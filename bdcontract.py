@@ -11,7 +11,7 @@ app = Flask(__name__)
 server_list = BDContractServerList()
 # DecisionEngine instance's decision algorithm: minimum_ping_delay
 # see more info in config.py
-de = DecisionEngine(decision_algorithm="default",
+de = DecisionEngine(decision_algorithm="minimum_ping_delay",
                     server_list=server_list,
                     max_workers=20,
                     consider_throughput=True)
@@ -125,3 +125,7 @@ def list_servers():
     """
     logger.info(f"Client interface list_servers(route'/listservers') has been called")
     return jsonify(data=de.server_list.convert_to_ip_list())
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8899)
