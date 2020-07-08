@@ -202,7 +202,10 @@ class DecisionEngine:
         # NECESSARILY NEED A LOCK HERE???
         # I THINK NOT NECESSARY.
         cur_time = time.time()
-        self.req_time_lst.append(cur_time)
+        # Only tasks on local device will be added to request_time_list
+        if data.server == Server("temp", "127.0.0.1"):
+            self.req_time_lst.append(cur_time)
+
         logger.info(f"Get task {data} and start offloading." +
                     f" Current time is {cur_time:.2f}, add to req_time_lst")
 
