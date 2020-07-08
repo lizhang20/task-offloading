@@ -1,3 +1,5 @@
+[中文版](https://github.com/piaoliangkb/task-offloading/blob/master/docs/README_CN.md)
+
 # task-offloading
 
 A simple task offloading client for HTTP requests to offload tasks to an edge server, resulting in efficient computation and low delay costs.
@@ -27,7 +29,7 @@ Users can access interfaces defined in a flask server to get the result server r
 
 - use the thread pool to offload tasks and get the result back
 
-- calculating throughout on local device (request_counts / throughput_time_period)
+- calculating throughput on local device (request_counts / throughput_time_period)
 
 `interfaces.py` defines task-specific interfaces (such as `FlaskTestInterfaces`, `BDInterfaces`), which will be used by the flask server exposed to uses. 
 

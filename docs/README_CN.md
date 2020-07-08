@@ -1,3 +1,5 @@
+[English version](https://github.com/piaoliangkb/task-offloading/blob/master/README.md)
+
 # task-offloading
 
 task-offloading 是移动边缘计算环境下处理 HTTP 请求的任务卸载客户端。它可以将 HTTP 请求卸载到边缘服务器，在边缘节点进行高效计算的同时保证低延迟。
@@ -43,7 +45,7 @@ task-offloading 是移动边缘计算环境下处理 HTTP 请求的任务卸载�
 
 ## 过程概览
 
-![process overview](docs/task-offloading.png)
+![process overview](task-offloading.png)
 
 ## 安装 
 
