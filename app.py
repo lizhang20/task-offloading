@@ -142,3 +142,7 @@ def update_servers_from_remote():
     return jsonify(
         data=de.server_list.convert_to_ip_list(), server=server, time=total_time
     )
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8899)

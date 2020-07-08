@@ -59,17 +59,16 @@ In `app.py`, I defined some interfaces to access remote servers, where serversid
 
 After this, you can configure `FlaskTestConfig.server_list` in `config.py`, ensure server list initialization using default constructor get correct servers.
 
-Then, run this offloading client using `sudo flask run` :
+Then, run this offloading client using `sudo`, default_host is `0.0.0.0`, default_port is `8899`:
 
 ```bash
-export FLASK_APP=app.py
-sudo flask run --port=[port]
+sudo python3 app.py
 ```
 
 Then you can access interfaces provided by this flask server, the server will call remote server to run tasks and get results back to you. Such as:
 
 ```bash
-$ curl http://localhost:[port]/square/20
+$ curl http://host:[port]/square/20
 {"data":"400.0","time":2.008405923843384}
 ```
 
@@ -77,4 +76,4 @@ Offloading details can be seen in logs of this offloading client.
 
 ## License
 
-MIT © 2020 Li Zhang
+MIT © 2020 piaoliangkb
