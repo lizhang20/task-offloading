@@ -73,7 +73,7 @@ def square(num):
     total_time = time.time() - st
     return jsonify(
         data=data, server=server, status_code=ret.result().status_code, time=total_time,
-        throughout=de.cal_throughput(),
+        throughput=de.cal_throughput(),
     )
 
 

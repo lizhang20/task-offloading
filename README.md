@@ -77,7 +77,7 @@ $ curl http://host:[port]/square/20
     "data": "400.0",
     "server": "127.0.0.1",
     "status_code": 200,
-    "throughout": 0,
+    "throughput": 0,
     "time": 8.00912618637085
 }
 ```
