@@ -212,7 +212,7 @@ class DecisionEngine:
         task = data.task
         port = data.port
 
-        logger.info(f"Call remote server {server.serverIP}:{port} with task {task}")
+        logger.info(f"Call remote server {server.serverIP}:{port} with task=\'{task}\'")
         r = requests.get(f"http://{server.serverIP}:{port}/{task}")
 
         # r.__repr__() is "<Response [200]>"
