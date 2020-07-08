@@ -69,7 +69,13 @@ Then you can access interfaces provided by this flask server, the server will ca
 
 ```bash
 $ curl http://host:[port]/square/20
-{"data":"400.0","time":2.008405923843384}
+{
+    "data": "400.0",
+    "server": "127.0.0.1",
+    "status_code": 200,
+    "throughout": 0,
+    "time": 8.00912618637085
+}
 ```
 
 Offloading details can be seen in logs of this offloading client.
