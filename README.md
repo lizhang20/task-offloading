@@ -84,6 +84,10 @@ $ curl http://host:[port]/square/20
 
 Offloading details can be seen in logs of this offloading client.
 
+### Offload start contract execution
+
+See [offloading_bdcontract_docs](https://github.com/piaoliangkb/task-offloading/blob/master/docs/bdcontract.md)
+
 ## License
 
 MIT © 2020 piaoliangkb

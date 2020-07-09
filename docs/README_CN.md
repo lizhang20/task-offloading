@@ -84,6 +84,10 @@ $ curl http://host:[port]/square/20
 
 任务卸载的细节部分可以参考源代码和卸载客户端的日志。
 
+### 卸载智能合约的执行
+
+见[文档](https://github.com/piaoliangkb/task-offloading/blob/master/docs/bdcontract.md)
+
 ## License
 
 MIT © 2020 piaoliangkb
