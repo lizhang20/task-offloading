@@ -47,6 +47,10 @@ task-offloading 是移动边缘计算环境下处理 HTTP 请求的任务卸载�
 
 ![process overview](task-offloading.png)
 
+程序中各独立模块：
+
+![single modules](single_modules.png)
+
 ## 安装 
 
 该项目使用 Python 3.7 实现，请使用 Python 3.7 或以上版本。

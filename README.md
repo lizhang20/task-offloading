@@ -47,6 +47,10 @@ Application servers:
 
 ![process overview](docs/task-offloading.png)
 
+Single modules:
+
+![single modules](docs/single_modules.png)
+
 ## Install
 
 This project is implemented using Python 3.7, so Python 3.7 or above is required.
