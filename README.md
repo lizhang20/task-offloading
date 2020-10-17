@@ -47,7 +47,7 @@ Application servers:
 
 ![process overview](docs/task-offloading.png)
 
-Single modules:
+Modules:
 
 ![single modules](docs/single_modules.png)
 
