@@ -2,7 +2,7 @@
 
 # task-offloading
 
-A simple task offloading client for HTTP requests to offload tasks to an edge server, resulting in efficient computation and low delay costs.
+Task-offloading is a simple task offloading client for HTTP requests, aims to offload HTTP requests from edge devices to edge server, resulting in efficient computing performance and low delay.
 
 This client supports **flexible task interface definition**, **automatic task offloading process**,  **easy to specify task execution server**. 
 
