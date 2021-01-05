@@ -2,7 +2,7 @@
 
 # task-offloading
 
-Task-offloading is a simple task offloading client for HTTP requests, aims to offload HTTP requests from edge devices to edge server, resulting in efficient computing performance and low delay.
+Task-offloading is a simple task offloading client for HTTP requests, and aims to offload HTTP requests from edge devices to edge servers, resulting in efficient computing performance and low delay.
 
 This client supports **flexible task interface definition**, **automatic task offloading process**,  **easy to specify task execution server**. 
 
@@ -31,7 +31,7 @@ Users can access interfaces defined in a flask server to get the result server r
 
 - calculating throughput on local device (request_counts / throughput_time_period)
 
-`interfaces.py` defines task-specific interfaces (such as `FlaskTestInterfaces`, `BDInterfaces`), which will be used by the flask server exposed to uses. 
+`interfaces.py` defines task-specific interfaces (such as `FlaskTestInterfaces`, `BDInterfaces`), which will be used by the flask server exposed to users. 
 
 `config.py` contains different configs for different applications.
 
@@ -39,9 +39,9 @@ Application servers:
 
 - `app.py` is associated with `FlaskTestConfig (config.py)`, `FlaskTestServerInterfaces (interfaces.py)`, `FlaskTestServerList (server.py)`. It defines a series of simple interfaces that can be accessed by users to indicate how to use the components mentioned before and how to program using this task offloading client.
 
-  >Serverside code is in `flask_test_example/`. Before using this offloading client, run serverside code on different servers.
+  >Server side code is in `flask_test_example/`. Before using this offloading client, run server side code on different servers.
 
-- `bdcontract.py` is another application for offloading smart contract.
+- `bdcontract.py` is another application for offloading smart contracts.
 
 ## Process Overview
 
@@ -63,9 +63,9 @@ pip install -r requirements.txt
 
 ### Testing a simple flask server
 
-In `app.py`, I defined some interfaces to access remote servers, where serverside code is in folder `flask_test_example/`. So before you run this client, you need to run serverside code on different servers. See how to run in `flask_test_example/README.md`.
+In `app.py`, I defined some interfaces to access remote servers, where server side code is in folder `flask_test_example/`. So before you run this client, you need to run server side code on different servers. See how to run in `flask_test_example/README.md`.
 
-After this, you can configure `FlaskTestConfig.server_list` in `config.py`, ensure server list initialization using default constructor get correct servers.
+After this, you can configure `FlaskTestConfig.server_list` in `config.py`, ensure server list initialization using default constructor and get correct servers.
 
 Then, run this offloading client using `sudo`, default_host is `0.0.0.0`, default_port is `8899`:
 
@@ -73,7 +73,7 @@ Then, run this offloading client using `sudo`, default_host is `0.0.0.0`, defaul
 sudo python3 app.py
 ```
 
-Then you can access interfaces provided by this flask server, the server will call remote server to run tasks and get results back to you. Such as:
+Then you can access interfaces provided by this flask server, the server will call a remote server to run tasks and get results back to you. Such as:
 
 ```bash
 $ curl http://host:[port]/square/20
